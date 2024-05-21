@@ -4,14 +4,14 @@ import { Guardian, LocalGuardian, Student, UserName } from './student.interface'
 const userNameSchema = new Schema<UserName>({
   firstName: {
     type: String,
-    required: true,
+    required: [true, 'First Name is required'],
   },
   middleName: {
     type: String,
   },
   lastName: {
     type: String,
-    required: true,
+    required: [true, 'Last Name is required'],
   },
 })
 
@@ -62,13 +62,22 @@ const localguardianSchema = new Schema<LocalGuardian>({
 })
 
 const studentSchema = new Schema<Student>({
-  id: { type: String },
-  name: userNameSchema,
-  gender: ['male', 'famale'],
+  id: { type: String, required: true, unique: true },
+  name: {
+    type: userNameSchema,
+    required: true,
+  },
+  gender: {
+    type: String,
+    enum: {
+      values: ['male', 'female', 'other'],
+    },
+    required: true,
+  },
   dateOfBirth: { type: String },
   email: {
     type: String,
-    required: true,
+    required: [true, 'Email is required'],
   },
   contactNo: {
     type: String,
@@ -79,7 +88,8 @@ const studentSchema = new Schema<Student>({
     required: true,
   },
   bloodGroup: {
-    type: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+    type: String,
+    enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
   },
   presentAddress: {
     type: String,
@@ -94,7 +104,11 @@ const studentSchema = new Schema<Student>({
   profileImg: {
     type: String,
   },
-  isActive: ['active', 'blocked'],
+  isActive: {
+    type: String,
+    enum: ['active', 'blocked'],
+    default: 'active',
+  },
 })
 
 export const StudentModel = model<Student>('Student', studentSchema)
